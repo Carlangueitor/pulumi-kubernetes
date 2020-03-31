@@ -93,11 +93,7 @@ func main() {
 }
 
 func writeNodeJSClient(data map[string]interface{}, outdir, templateDir string) {
-	pkgSpec := gen.PulumiSchema(data)
-	pkg, err := schema.ImportSpec(pkgSpec)
-	if err != nil {
-		panic(err)
-	}
+	pkg := genPulumiSchemaPackage(data)
 
 	// TODO: generate overlay files
 
@@ -398,16 +394,10 @@ func genPulumiSchemaPackage(data map[string]interface{}) *schema.Package {
 		panic(err)
 	}
 
-
 	pkg, err := schema.ImportSpec(pkgSpec)
 	if err != nil {
 		panic(err)
 	}
-	b, err = json.MarshalIndent(pkgSpec, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-	ioutil.WriteFile("schema.json", b, 0644)
 	return pkg
 }
 
