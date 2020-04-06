@@ -44,9 +44,7 @@ $(OPENAPI_FILE)::
 build:: $(OPENAPI_FILE)
 	$(GO) install $(VERSION_FLAGS) $(PROJECT)/cmd/$(PROVIDER)
 	$(GO) install $(VERSION_FLAGS) $(PROJECT)/cmd/$(CODEGEN)
-	# Delete only files and folders that are generated.
-	rm -r sdk/python/pulumi_kubernetes/*/ sdk/python/pulumi_kubernetes/__init__.py
-	for LANGUAGE in "dotnet" "go" "nodejs" "python"; do \
+	for LANGUAGE in "nodejs"; do \
 		$(CODEGEN) $$LANGUAGE $(OPENAPI_FILE) pkg/gen/$${LANGUAGE}-templates $(PACKDIR) || exit 3 ; \
 	done
 	cd ${PACKDIR}/nodejs/ && \
@@ -55,15 +53,6 @@ build:: $(OPENAPI_FILE)
 	cp README.md LICENSE ${PACKDIR}/nodejs/package.json ${PACKDIR}/nodejs/yarn.lock ${PACKDIR}/nodejs/bin/
 	cp README.md ${PACKDIR}/python/
 	sed -i.bak 's/$${VERSION}/$(VERSION)/g' ${PACKDIR}/nodejs/bin/package.json
-	cd ${PACKDIR}/python/ && \
-		$(PYTHON) setup.py clean --all 2>/dev/null && \
-		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
-		sed -i.bak -e "s/\$${VERSION}/$(PYPI_VERSION)/g" -e "s/\$${PLUGIN_VERSION}/$(VERSION)/g" ./bin/setup.py && \
-		rm ./bin/setup.py.bak && \
-		cd ./bin && $(PYTHON) setup.py build sdist
-	cd ${PACKDIR}/dotnet/&& \
-		echo "${VERSION:v%=%}" >version.txt && \
-		dotnet build /p:Version=${DOTNET_VERSION}
 
 lint::
 	for DIR in "cmd" "pkg" "sdk" "tests" ; do \
