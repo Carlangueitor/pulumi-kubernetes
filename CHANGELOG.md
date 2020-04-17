@@ -1,5 +1,9 @@
 ## HEAD (Unreleased)
 
+### Bug fixes
+
+-   Fix HELM_HOME handling for Helm v3. (https://github.com/pulumi/pulumi-kubernetes/pull/1076)
+
 ## 2.0.0 (April 16, 2020)
 
 ### Improvements
